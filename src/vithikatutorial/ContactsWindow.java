@@ -170,6 +170,29 @@ public class ContactsWindow extends javax.swing.JFrame {
 
     private void BtnAddContactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnAddContactActionPerformed
         // TODO add your handling code here:
+        String name = InputName.getText();
+        String phone = InputPhone.getText();
+        
+        try {
+            System.out.println("Connecting to database...");
+            conn = DriverManager.getConnection(DB_URL,USER,PASS);
+
+            System.out.println("Creating statement...");
+            String sql = "INSERT INTO public.\"Contacts\"(\"Name\", \"Phone\") VALUES (?, ?);";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, name);
+            pstmt.setString(2, phone);
+            pstmt.execute();
+
+            // Clean-up environment
+            pstmt.close();
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }  
+        populateTable();
+        InputName.setText("Name");
+        InputPhone.setText("Phone");
     }//GEN-LAST:event_BtnAddContactActionPerformed
 
     /**
