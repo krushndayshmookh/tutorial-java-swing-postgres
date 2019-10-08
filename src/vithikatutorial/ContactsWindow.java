@@ -47,6 +47,11 @@ public class ContactsWindow extends javax.swing.JFrame {
     
     private void populateTable () {
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+        // Empty the table before inserting items
+        while(tableModel.getRowCount() != 0){
+            tableModel.removeRow(0);
+        }
+        
         try {
             // Open a connection
             System.out.println("Connecting to database...");
