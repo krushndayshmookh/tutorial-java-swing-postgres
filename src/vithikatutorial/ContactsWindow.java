@@ -5,6 +5,8 @@
  */
 package vithikatutorial;
 
+import java.sql.*;
+
 /**
  *
  * @author Krushn Dayshmookh
@@ -14,10 +16,33 @@ public class ContactsWindow extends javax.swing.JFrame {
     /**
      * Creates new form ContactsWindow
      */
+    
+    static final String DB_URL = "jdbc:postgresql://localhost:5432/postgres";
+    
+    //  Database credentials
+    static final String USER = "postgres";
+    static final String PASS = "postgres";
+   
+    Connection conn = null;
+    Statement stmt = null;
+    
     public ContactsWindow() {
         initComponents();
+        initDatabase();
     }
 
+    private void initDatabase () {
+        try {
+            // Register Driver
+            // Driver driver = new org.postgresql.Driver();
+            // DriverManager.registerDriver(driver);
+            Class.forName("org.postgresql.Driver");
+        } catch (Exception ex){
+            System.out.println("Error: unable to load driver class!");
+            System.exit(1);
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -51,10 +76,7 @@ public class ContactsWindow extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+                
             },
             new String [] {
                 "Name", "Phone"
