@@ -6,6 +6,7 @@
 package vithikatutorial;
 
 import java.sql.*;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -29,6 +30,7 @@ public class ContactsWindow extends javax.swing.JFrame {
     public ContactsWindow() {
         initComponents();
         initDatabase();
+        populateTable();
     }
 
     private void initDatabase () {
@@ -41,6 +43,39 @@ public class ContactsWindow extends javax.swing.JFrame {
             System.out.println("Error: unable to load driver class!");
             System.exit(1);
         }
+    }
+    
+    private void populateTable () {
+        DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+        try {
+            // Open a connection
+            System.out.println("Connecting to database...");
+            conn = DriverManager.getConnection(DB_URL,USER,PASS);
+
+            // Execute a query
+            System.out.println("Creating statement...");
+            stmt = conn.createStatement();
+            String sql = "SELECT * FROM public.\"Contacts\"";
+            ResultSet rs = stmt.executeQuery(sql);
+
+            // Extract data from result set
+            while(rs.next()){
+                //Retrieve by column name
+                String name  = rs.getString("Name");
+                String phone = rs.getString("Phone");
+
+                //Display values
+                Object [] obj = {name,phone};
+                tableModel.addRow(obj);
+            }
+
+            // Clean-up environment
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }  
     }
     
     /**
@@ -76,7 +111,7 @@ public class ContactsWindow extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                
+
             },
             new String [] {
                 "Name", "Phone"
