@@ -27,6 +27,8 @@ public class ContactsWindow extends javax.swing.JFrame {
     Connection conn = null;
     Statement stmt = null;
     
+    int selectedRow = 0;
+    
     public ContactsWindow() {
         initComponents();
         initDatabase();
@@ -113,6 +115,11 @@ public class ContactsWindow extends javax.swing.JFrame {
         InputPhone.setText("Phone");
 
         BtnDeleteContact.setText("Delete Contact");
+        BtnDeleteContact.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnDeleteContactActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -128,6 +135,11 @@ public class ContactsWindow extends javax.swing.JFrame {
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(jTable1);
@@ -194,6 +206,35 @@ public class ContactsWindow extends javax.swing.JFrame {
         InputName.setText("Name");
         InputPhone.setText("Phone");
     }//GEN-LAST:event_BtnAddContactActionPerformed
+
+    private void BtnDeleteContactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnDeleteContactActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        String name = model.getValueAt(selectedRow, 0).toString();
+        String phone = model.getValueAt(selectedRow, 1).toString();
+        
+        try {
+            conn = DriverManager.getConnection(DB_URL,USER,PASS);
+
+            String sql = "DELETE FROM public.\"Contacts\"WHERE \"Name\"=? AND \"Phone\"=?;";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, name);
+            pstmt.setString(2, phone);
+            pstmt.execute();
+
+            // Clean-up environment
+            pstmt.close();
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }  
+        populateTable();
+    }//GEN-LAST:event_BtnDeleteContactActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        selectedRow = jTable1.getSelectedRow();
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments
